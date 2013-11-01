@@ -32,8 +32,15 @@ typedef void(^KFSheetDidDismissBlock)(void *contextInfo, NSInteger returnCode);
 @interface NSApplication (SheetBlocks)
 
 
-void KFBeginAlertSheet(NSString *title, NSString *defaultButton, NSString *alternateButton, NSString *otherButton, NSWindow *window, KFSheetDidEndBlock didEndBlock, KFSheetDidDismissBlock didDismissBlock, void *contextInfo, NSString *formattedString)
+
+void KFBeginAlertSheet(NSString *title, NSString *defaultButton, NSString *alternateButton, NSString *otherButton, NSWindow *docWindow, KFSheetDidEndBlock didEndBlock, KFSheetDidDismissBlock didDismissBlock, void *contextInfo, NSString *msgFormat)
 ;
+
+
+void KFBeginInformationalAlertSheet(NSString *title, NSString *defaultButton, NSString *alternateButton, NSString *otherButton, NSWindow *docWindow, id modalDelegate, KFSheetDidEndBlock didEndBlock, KFSheetDidDismissBlock didDismissBlock, void *contextInfo, NSString *msgFormat);
+
+
+void KFBeginCriticalAlertSheet(NSString *title, NSString *defaultButton, NSString *alternateButton, NSString *otherButton, NSWindow *docWindow, id modalDelegate, KFSheetDidEndBlock didEndBlock, KFSheetDidDismissBlock didDismissBlock, void *contextInfo, NSString *msgFormat);
 
 
 @end
