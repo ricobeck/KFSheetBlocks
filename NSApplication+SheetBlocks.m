@@ -32,7 +32,7 @@
 #define kContextInfo @"contextInfo"
 
 
-void KFBeginAlertSheet(NSString *title, NSString *defaultButton, NSString *alternateButton, NSString *otherButton, NSWindow *window, KFSheetDidEndBlock didEndBlock, KFSheetDidDismissBlock didDismissBlock, void *contextInfo, NSString *formattedString)
+void KFBeginAlertSheet(NSString *title, NSString *defaultButton, NSString *alternateButton, NSString *otherButton, NSWindow *docWindow, KFSheetDidEndBlock didEndBlock, KFSheetDidDismissBlock didDismissBlock, void *contextInfo, NSString *msgFormat)
 {
     NSMutableDictionary *contextInfoParameter = [NSMutableDictionary new];
     
@@ -51,14 +51,58 @@ void KFBeginAlertSheet(NSString *title, NSString *defaultButton, NSString *alter
         contextInfoParameter[kContextInfo] = (__bridge id)(contextInfo);
     }
     
-    NSBeginAlertSheet(title, defaultButton, alternateButton, otherButton, window, NSApp, @selector(_kfSheet:didEndWithCode:context:), @selector(_kfSheet:didDismissWithCode:context:), (__bridge_retained void *)(contextInfoParameter), formattedString,nil);
+    NSBeginAlertSheet(title, defaultButton, alternateButton, otherButton, docWindow, NSApp, @selector(kf_sheet:didEndWithCode:context:), @selector(kf_sheet:didDismissWithCode:context:), (__bridge_retained void *)(contextInfoParameter), msgFormat,nil);
+}
+
+
+void KFBeginInformationalAlertSheet(NSString *title, NSString *defaultButton, NSString *alternateButton, NSString *otherButton, NSWindow *docWindow, id modalDelegate, KFSheetDidEndBlock didEndBlock, KFSheetDidDismissBlock didDismissBlock, void *contextInfo, NSString *msgFormat)
+{
+    NSMutableDictionary *contextInfoParameter = [NSMutableDictionary new];
+    
+    if (didEndBlock != nil)
+    {
+        contextInfoParameter[kDidEndBlock] = didEndBlock;
+    }
+    
+    if (didDismissBlock != nil)
+    {
+        contextInfoParameter[kDidDismissBlock] = didDismissBlock;
+    }
+    
+    if (contextInfo != nil)
+    {
+        contextInfoParameter[kContextInfo] = (__bridge id)(contextInfo);
+    }
+    NSBeginInformationalAlertSheet(title, defaultButton, alternateButton, otherButton, docWindow, NSApp, @selector(kf_sheet:didEndWithCode:context:), @selector(kf_sheet:didDismissWithCode:context:), (__bridge void *)(contextInfoParameter), msgFormat, nil);
+}
+
+
+void KFBeginCriticalAlertSheet(NSString *title, NSString *defaultButton, NSString *alternateButton, NSString *otherButton, NSWindow *docWindow, id modalDelegate, KFSheetDidEndBlock didEndBlock, KFSheetDidDismissBlock didDismissBlock, void *contextInfo, NSString *msgFormat)
+{
+    NSMutableDictionary *contextInfoParameter = [NSMutableDictionary new];
+    
+    if (didEndBlock != nil)
+    {
+        contextInfoParameter[kDidEndBlock] = didEndBlock;
+    }
+    
+    if (didDismissBlock != nil)
+    {
+        contextInfoParameter[kDidDismissBlock] = didDismissBlock;
+    }
+    
+    if (contextInfo != nil)
+    {
+        contextInfoParameter[kContextInfo] = (__bridge id)(contextInfo);
+    }
+    NSBeginCriticalAlertSheet(title, defaultButton, alternateButton, otherButton, docWindow, NSApp, @selector(kf_sheet:didEndWithCode:context:), @selector(kf_sheet:didDismissWithCode:context:), (__bridge void *)(contextInfoParameter), msgFormat, nil);
 }
 
 
 #pragma mark - Internal Selectors
 
 
-- (void)_kfSheet:(NSPanel *)panel didEndWithCode:(NSInteger)code context:(void *)context
+- (void)kf_sheet:(NSPanel *)panel didEndWithCode:(NSInteger)code context:(void *)context
 {
     NSDictionary *parameters = (__bridge NSDictionary *)(context);
     KFSheetDidEndBlock didEndBlock = [parameters objectForKey:kDidEndBlock];
@@ -71,7 +115,7 @@ void KFBeginAlertSheet(NSString *title, NSString *defaultButton, NSString *alter
 }
 
 
-- (void)_kfSheet:(NSPanel *)panel didDismissWithCode:(NSInteger)code context:(void *)context
+- (void)kf_sheet:(NSPanel *)panel didDismissWithCode:(NSInteger)code context:(void *)context
 {
     NSDictionary *parameters = (__bridge_transfer NSDictionary *)context;
     KFSheetDidDismissBlock didDismissBlock = [parameters objectForKey:kDidDismissBlock];
@@ -82,5 +126,6 @@ void KFBeginAlertSheet(NSString *title, NSString *defaultButton, NSString *alter
         didDismissBlock(contextInfo, code);
     }
 }
+
 
 @end
